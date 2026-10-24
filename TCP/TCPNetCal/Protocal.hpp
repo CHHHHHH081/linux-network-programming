@@ -109,82 +109,69 @@ public:
         : _func(func)
     {
     }
-    void GetRequest(std::shared_ptr<Socket> &sock, InetAddr &addr)
+    void GetRequest(std::shared_ptr<Socket> &sock, InetAddr &client)
     {
+        // 读取
         std::string buffer_queue;
         while (true)
         {
-            // 尽量处理缓冲区中已有的完整报文
-            bool badframe = false;
-            while (true)
+            int n = sock->Recv(&buffer_queue);
+            if (n > 0)
             {
                 std::string json_package;
-                int status = Decode(buffer_queue, &json_package);
-                if (status <= 0)
-                {
-                    // 0: 数据不足, 1: 已取出一个完整报文, -1: 非法报文
-                    badframe = (status < 0);
-                    break;
-                }
-                // json_package 已是完整请求, 反序列化
-                Request req;
-                if (!req.Deserialize(json_package))
+                // 1. 解析报文，提取完整的json请求，如果不完整，就让服务器继续读取
+                bool ret = Decode(buffer_queue, &json_package);
+                if (!ret)
                     continue;
-                // 回调业务函数完成计算
+                // 一定拿到了一个完整的报文
+                // 2. 请求json串，反序列化
+                Request req;
+                bool ok = req.Deserialize(json_package);
+                if (!ok)
+                    continue;
+                // 3. 我一定得到了一个内部属性已经被设置了的req了.
+                // 通过req->resp, 不就是要完成计算功能嘛！！业务
                 Response resp = _func(req);
-                std::string ret = resp.Serialize();
-                int sendn = sock->Send(ret);
-                (void)sendn;
-            }
-            if (badframe)
-            {
-                LOG(Loglevel::INFO) << "bad frame, quit";
-                break; // 协议非法, 断开连接
-            }
 
-            // 缓冲区无完整报文, 继续读取
-            int n = sock->Recv(&buffer_queue);
-            if (n == 0)
-            {
-                LOG(Loglevel::INFO) << "quit";
-                break; // 对端关闭
+                // 4. 序列化
+                std::string json_str = resp.Serialize();
+
+                // 5. 添加自定义长度
+                std::string send_str = Encode(json_str); // 携带长度的应答报文了"len\r\n{result:XXX, code:XX}\r\n"
+
+                // 6. 直接发送
+                sock->Send(send_str);
             }
-            if (n < 0)
-                break; // 读取出错
+            else if (n == 0)
+            {
+                LOG(Loglevel::INFO) << "client:" << client.AddrString() << "Quit!";
+                break;
+            }
+            else
+            {
+                LOG(Loglevel::WARNING) << "client:" << client.AddrString() << ", recv error";
+                break;
+            }
         }
     }
 
-    // 用于提取自定义报文: len\r\n{XXX:XXX,XX:XX}\r\n, 放到json里
-    // 返回: 1=已取出完整报文; 0=数据不完整需继续读; -1=协议非法
-    int Decode(std::string &msg, std::string *json)
+    // 用于提取自定义报文: len\r\n{XXX:XXX,XX:XX}\r\n
+    bool Decode(std::string &buffer, std::string *package)
     {
-        size_t pos = msg.find(sep);
+        ssize_t pos = buffer.find(sep);
         if (pos == std::string::npos)
-            return 0; // 尚无长度前缀分隔符, 数据不足
+            return false; // 让调用方继续从内核中读取数据
+        std::string package_len_str = buffer.substr(0, pos);
+        int package_len_int = std::stoi(package_len_str);
+        // buffer 一定有长度，但是一定有完整的报文吗？
+        int target_len = package_len_str.size() + package_len_int + 2 * sep.size();
+        if (buffer.size() < target_len)
+            return false;
 
-        std::string len_str = msg.substr(0, pos);
-        // 校验长度前缀: 必须是非负整数且不超过 int 范围
-        int len = 0;
-        try
-        {
-            size_t idx = 0;
-            long v = std::stol(len_str, &idx);
-            if (idx != len_str.size() || v < 0 || v > INT_MAX)
-                return -1; // 非法长度前缀
-            len = static_cast<int>(v);
-        }
-        catch (...)
-        {
-            return -1;
-        }
-
-        // 完整自定义报文长度
-        int targetlen = len_str.size() + 2 * sep.size() + len;
-        if (msg.size() < targetlen)
-            return 0; // 报文未到齐
-        *json = msg.substr(pos + sep.size(), len);
-        msg.erase(0, targetlen);
-        return 1;
+        // buffer一定至少有一个完整的报文！
+        *package = buffer.substr(pos + sep.size(), package_len_int);
+        buffer.erase(0, target_len);
+        return true;
     }
 
     // 用于将json串转化为自定义报文: len\r\n{XXX:XXX,XX:XX}\r\n
