@@ -3,13 +3,13 @@
 
 using namespace SocketModule;
 
-using func_t = std::function<void(std::shared_ptr<Socket>, InetAddr)>;
+using service_t = std::function<void(std::shared_ptr<Socket> &, InetAddr &)>;
 
 class TCPServer
 {
 public:
-    TCPServer(uint16_t port, func_t serveice)
-        : _port(port), _service(serveice), _isrunning(true)
+    TCPServer(uint16_t port, service_t service)
+        : _port(port), _service(service), _isrunning(false), _listensock(std::make_unique<TCPSocket>())
     {
         _listensock->BuildTCPSocketMethod(port);
     }
@@ -25,6 +25,7 @@ public:
             {
                 continue;
             }
+            LOG(Loglevel::INFO) << "accept success, addr: " << addr.AddrString();
             pid_t n = fork();
             if (n < 0)
             {
@@ -53,7 +54,7 @@ public:
 
 private:
     uint16_t _port;
-    std::shared_ptr<Socket> _listensock;
-    func_t _service;
+    std::unique_ptr<Socket> _listensock;
+    service_t _service;
     bool _isrunning;
 };

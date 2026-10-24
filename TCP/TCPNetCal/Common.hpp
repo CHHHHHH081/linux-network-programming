@@ -3,6 +3,7 @@
 #include <functional>
 #include <unistd.h>
 #include <string>
+#include <sstream>
 #include <cstring>
 #include <sys/wait.h>
 #include <sys/socket.h>
