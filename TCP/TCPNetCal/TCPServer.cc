@@ -17,8 +17,10 @@ int main(int argc, char *argv[])
     Enable_Console_Stretage();
     uint16_t port = std::stoi(argv[1]);
     std::unique_ptr<Cal> cal = std::make_unique<Cal>();
+
     std::shared_ptr<Protocal> pro = std::make_shared<Protocal>([&cal](Request &req) -> Response
                                                                { return cal->Execute(req); });
+
     std::shared_ptr<TCPServer> tsvr = std::make_shared<TCPServer>(port,
                                                                   [&pro](std::shared_ptr<Socket> &sock, InetAddr &addr)
                                                                   {

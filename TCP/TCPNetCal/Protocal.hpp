@@ -25,7 +25,7 @@ public:
         writer->write(root, &ss);
         return ss.str();
     }
-    bool Deserialize(std::string s)
+    bool Deserialize(const std::string &s)
     {
         Json::Value root;
         Json::Reader reader;
@@ -73,7 +73,7 @@ public:
         writer->write(root, &ss);
         return ss.str();
     }
-    bool Deserialize(std::string s)
+    bool Deserialize(const std::string &s)
     {
         Json::Value root;
         Json::Reader reader;
@@ -94,6 +94,8 @@ public:
     void SetResult(int result) { _result = result; }
     void SetCode(int code) { _code = code; }
 
+    void ShowResult() { std::cout << _result << "[" << _code << "]" << std::endl; }
+
 private:
     int _result;
     int _code;
@@ -105,6 +107,9 @@ const std::string sep = "\r\n";
 class Protocal
 {
 public:
+    Protocal()
+    {
+    }
     Protocal(func_t func)
         : _func(func)
     {
@@ -119,28 +124,28 @@ public:
             if (n > 0)
             {
                 std::string json_package;
-                // 1. 解析报文，提取完整的json请求，如果不完整，就让服务器继续读取
-                bool ret = Decode(buffer_queue, &json_package);
-                if (!ret)
-                    continue;
-                // 一定拿到了一个完整的报文
-                // 2. 请求json串，反序列化
-                Request req;
-                bool ok = req.Deserialize(json_package);
-                if (!ok)
-                    continue;
-                // 3. 我一定得到了一个内部属性已经被设置了的req了.
-                // 通过req->resp, 不就是要完成计算功能嘛！！业务
-                Response resp = _func(req);
+                // 1. 不断解析报文，提取完整的json请求，直到不完整，就让服务器继续读取
+                while (Decode(buffer_queue, &json_package))
+                {
+                    // 一定拿到了一个完整的报文
+                    // 2. 请求json串，反序列化
+                    Request req;
+                    bool ok = req.Deserialize(json_package);
+                    if (!ok)
+                        continue;
+                    // 3. 我一定得到了一个内部属性已经被设置了的req了.
+                    // 通过req->resp, 不就是要完成计算功能嘛！！业务
+                    Response resp = _func(req);
 
-                // 4. 序列化
-                std::string json_str = resp.Serialize();
+                    // 4. 序列化
+                    std::string json_str = resp.Serialize();
 
-                // 5. 添加自定义长度
-                std::string send_str = Encode(json_str); // 携带长度的应答报文了"len\r\n{result:XXX, code:XX}\r\n"
+                    // 5. 添加自定义长度
+                    std::string send_str = Encode(json_str); // 携带长度的应答报文了"len\r\n{result:XXX, code:XX}\r\n"
 
-                // 6. 直接发送
-                sock->Send(send_str);
+                    // 6. 直接发送
+                    sock->Send(send_str);
+                }
             }
             else if (n == 0)
             {
@@ -149,10 +154,45 @@ public:
             }
             else
             {
-                LOG(Loglevel::WARNING) << "client:" << client.AddrString() << ", recv error";
+                LOG(Loglevel::ERROR) << "client:" << client.AddrString() << ", recv error";
                 break;
             }
         }
+    }
+
+    bool GetResponse(std::shared_ptr<Socket> sock, std::string &recv_buf, Response &resp) // 存在问题, 当信息堆积时, 无法优雅将out带出,可以考虑将Response作为输出参数
+    {
+        while (true)
+        {
+            std::string json_package;
+            int n = sock->Recv(&recv_buf);
+            if (n > 0)
+            {
+                // recv_buf为读取到的信息
+                while (Decode(recv_buf, &json_package))
+                {
+                    // json_package一定是recv_buf内的json请求, 需要将其反序列化到resp内
+                    if (!resp.Deserialize(json_package))
+                    {
+                        LOG(Loglevel::WARNING) << "unvalid response json";
+                        continue;
+                    }
+                    // 反序列化完成, resp内已有结果, 它的使命结束了
+                    return true;
+                }
+            }
+            else if (n == 0)
+            {
+                LOG(Loglevel::INFO) << "server quit!";
+                break;
+            }
+            else
+            {
+                LOG(Loglevel::ERROR) << "server recv error";
+                break;
+            }
+        }
+        return false;
     }
 
     // 用于提取自定义报文: len\r\n{XXX:XXX,XX:XX}\r\n
@@ -179,6 +219,13 @@ public:
     {
         std::string len = std::to_string(msg.size());
         return len + sep + msg + sep;
+    }
+
+    std::string BuildReqEncodeString(int x, int y, char oper)
+    {
+        Request req(x, y, oper);
+        std::string jsonstr = req.Serialize();
+        return Encode(jsonstr);
     }
 
 private:

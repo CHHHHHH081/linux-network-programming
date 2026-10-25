@@ -1,11 +1,11 @@
 .PHONY:all
-all:tcpserver tcpclient
+all:server_netcal client_netcal
 
-tcpserver:TCPServer.cc
+server_netcal:TCPServer.cc
 	g++ -o $@ $^ -std=c++17 -ljsoncpp
-tcpclient:TCPClient.cc
+client_netcal:TCPClient.cc
 	g++ -o $@ $^ -std=c++17 -ljsoncpp
 
 .PHONY:clean
 clean:
-	rm -f tcpserver
+	rm -f server_netcal client_netcal
