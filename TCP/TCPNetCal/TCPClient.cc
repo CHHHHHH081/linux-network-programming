@@ -9,17 +9,21 @@ void Usage(std::string proc)
     exit(USAGE_ERR);
 }
 
-std::string GetReqFromStdinAndEncode(std::shared_ptr<Protocal> Encodetool)
+bool GetReqFromStdinAndEncode(std::shared_ptr<Protocal> Encodetool, std::string &out)
 {
     int x, y;
     char oper;
     std::cout << "Please Enter x: ";
-    std::cin >> x;
+    if (!(std::cin >> x))
+        return false;
     std::cout << "Please Enter y: ";
-    std::cin >> y;
+    if (!(std::cin >> y))
+        return false;
     std::cout << "Please Enter operator: ";
-    std::cin >> oper;
-    return Encodetool->BuildReqEncodeString(x, y, oper);
+    if (!(std::cin >> oper))
+        return false;
+    out = Encodetool->BuildReqEncodeString(x, y, oper);
+    return true;
 }
 
 int main(int argc, char *argv[])
@@ -44,7 +48,9 @@ int main(int argc, char *argv[])
         std::string recv_buf; // recv_buf内存放收到的请求
         while (true)
         {
-            std::string EncodeStdin = GetReqFromStdinAndEncode(pPro);
+            std::string EncodeStdin;
+            if (!GetReqFromStdinAndEncode(pPro, EncodeStdin))
+                break;
             int sendn = client->Send(EncodeStdin);
             (void)sendn;
             // 请求已发送, 下一步应该接收返回

@@ -160,7 +160,7 @@ public:
         }
     }
 
-    bool GetResponse(std::shared_ptr<Socket> sock, std::string &recv_buf, Response &resp) // 存在问题, 当信息堆积时, 无法优雅将out带出,可以考虑将Response作为输出参数
+    bool GetResponse(std::shared_ptr<Socket> &sock, std::string &recv_buf, Response &resp)
     {
         while (true)
         {
@@ -175,7 +175,7 @@ public:
                     if (!resp.Deserialize(json_package))
                     {
                         LOG(Loglevel::WARNING) << "unvalid response json";
-                        continue;
+                        return false;
                     }
                     // 反序列化完成, resp内已有结果, 它的使命结束了
                     return true;
@@ -184,11 +184,13 @@ public:
             else if (n == 0)
             {
                 LOG(Loglevel::INFO) << "server quit!";
+                return false;
                 break;
             }
             else
             {
                 LOG(Loglevel::ERROR) << "server recv error";
+                return false;
                 break;
             }
         }
@@ -202,7 +204,20 @@ public:
         if (pos == std::string::npos)
             return false; // 让调用方继续从内核中读取数据
         std::string package_len_str = buffer.substr(0, pos);
-        int package_len_int = std::stoi(package_len_str);
+        int package_len_int = 0;
+        try
+        {
+            // errpos表示第一个未转换位置, 也就是出错的位置, 如果转换正确, 那它应该是最后位置
+            size_t errpos = 0;
+            package_len_int = std::stoi(package_len_str, &errpos);
+            if (errpos != package_len_str.size() || package_len_int <= 0)
+                return false;
+        }
+        catch (const std::exception &)
+        {
+            return false;
+        }
+
         // buffer 一定有长度，但是一定有完整的报文吗？
         int target_len = package_len_str.size() + package_len_int + 2 * sep.size();
         if (buffer.size() < target_len)
