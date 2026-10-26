@@ -20,7 +20,8 @@ enum ExitCode
     LISTEN_ERR,
     READ_ERR,
     FORK_ERR,
-    CONNECT_ERR
+    CONNECT_ERR,
+    OPEN_ERR
 };
 
 class NoCopy

@@ -1,6 +1,7 @@
 #include "TCPServer.hpp"
 #include "Protocal.hpp"
 #include "NetCal.hpp"
+#include "Daemon.hpp"
 
 using namespace SocketModule;
 void Usage(std::string proc)
@@ -14,7 +15,8 @@ int main(int argc, char *argv[])
     {
         Usage(argv[0]);
     }
-    Enable_Console_Stretage();
+    Daemon(1, 0);
+    Enable_File_Stretage();
     uint16_t port = std::stoi(argv[1]);
     std::unique_ptr<Cal> cal = std::make_unique<Cal>();
 
