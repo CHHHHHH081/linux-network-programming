@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova · 现代创意首页</title>
+    <!-- Google Fonts 提升排版质感 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+    <!-- 字体图标库 Font Awesome 用于简约图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* 重置与基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f9fafc;
+            color: #1e1e2f;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b0b1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            color: #4f46e5;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2d2d44;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #4f46e5;
+        }
+
+        /* 按钮样式 */
+        .btn-outline {
+            padding: 10px 24px;
+            border-radius: 40px;
+            border: 1.5px solid #e0e0ea;
+            background: white;
+            font-weight: 500;
+            color: #1e1e2f;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn-outline:hover {
+            border-color: #4f46e5;
+            background: #f0efff;
+            color: #4f46e5;
+        }
+
+        .btn-primary {
+            padding: 10px 26px;
+            border-radius: 40px;
+            background: #4f46e5;
+            color: white;
+            font-weight: 600;
+            border: none;
+            transition: background 0.2s ease, transform 0.1s ease;
+            cursor: pointer;
+            font-size: 15px;
+            box-shadow: 0 8px 18px -6px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            padding: 72px 0 80px;
+        }
+
+        .hero-content {
+            max-width: 540px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #e9e8ff;
+            color: #4f46e5;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin-bottom: 28px;
+            letter-spacing: 0.3px;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        .hero-badge i {
+            font-size: 12px;
+        }
+
+        .hero h1 {
+            font-size: 54px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: #0b0b1a;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 .highlight {
+            color: #4f46e5;
+            position: relative;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #4b4b63;
+            margin-bottom: 40px;
+            max-width: 480px;
+            line-height: 1.6;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 16px 38px;
+            font-size: 16px;
+            border-radius: 50px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid #d0d0dd;
+            color: #1e1e2f;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: #4f46e5;
+            background: #f7f6ff;
+            color: #4f46e5;
+            transform: translateY(-1px);
+        }
+
+        /* 右侧视觉元素 — 抽象卡片组 */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .visual-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            width: 100%;
+            max-width: 440px;
+            backdrop-filter: blur(4px);
+            transition: transform 0.3s ease;
+        }
+
+        .visual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .visual-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #8b85ff, #6d63f0);
+            border: 2.5px solid white;
+            margin-right: -12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar:nth-child(2) {
+            background: linear-gradient(145deg, #f0a6ca, #e07aa8);
+        }
+
+        .avatar:nth-child(3) {
+            background: linear-gradient(145deg, #7ed6df, #4bbec7);
+        }
+
+        .avatar-more {
+            background: #f0f0f6;
+            color: #4f46e5;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2.5px solid white;
+            margin-left: 4px;
+        }
+
+        .live-indicator {
+            background: #e6f7e6;
+            color: #1e7e34;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-indicator .dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+        }
+
+        .visual-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0b0b1a;
+            letter-spacing: -0.01em;
+        }
+
+        .visual-text {
+            font-size: 15px;
+            color: #6b6b85;
+            line-height: 1.5;
+        }
+
+        .progress-block {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 8px 0 4px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2d2d44;
+        }
+
+        .progress-bar-bg {
+            flex: 1;
+            height: 8px;
+            background: #ededf2;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #4f46e5, #8b85ff);
+        }
+
+        .progress-fill.w-75 {
+            width: 75%;
+        }
+
+        .progress-fill.w-55 {
+            width: 55%;
+        }
+
+        .progress-fill.w-90 {
+            width: 90%;
+        }
+
+        .visual-footer {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #f0f0f6;
+            padding-top: 20px;
+            margin-top: 4px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0b0b1a;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #8b8ba3;
+            font-weight: 500;
+        }
+
+        /* 特性卡片区域 */
+        .features-section {
+            padding: 40px 0 80px;
+        }
+
+        .section-head {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-head h2 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b0b1a;
+            margin-bottom: 16px;
+        }
+
+        .section-head p {
+            font-size: 18px;
+            color: #5b5b75;
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 26px 40px -16px rgba(79, 70, 229, 0.18);
+            border-color: rgba(79, 70, 229, 0.1);
+        }
+
+        .feature-icon {
+            background: #eeedff;
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            color: #4f46e5;
+            font-size: 26px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #0b0b1a;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-card p {
+            color: #5b5b75;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .feature-link {
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 500;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s;
+        }
+
+        .feature-link i {
+            font-size: 13px;
+            transition: transform 0.2s;
+        }
+
+        .feature-link:hover {
+            gap: 10px;
+        }
+
+        .feature-link:hover i {
+            transform: translateX(3px);
+        }
+
+        /* 底部 CTA 区 */
+        .cta-section {
+            background: linear-gradient(135deg, #f4f3ff 0%, #faf9ff 100%);
+            border-radius: 40px;
+            padding: 64px 48px;
+            text-align: center;
+            margin: 40px 0 80px;
+            border: 1px solid #edeaff;
+        }
+
+        .cta-section h2 {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0b0b1a;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            font-size: 17px;
+            color: #52526b;
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cta-form input {
+            padding: 16px 24px;
+            border-radius: 50px;
+            border: 1.5px solid #ddddf0;
+            font-size: 15px;
+            width: 300px;
+            max-width: 100%;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-form input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .cta-note {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #8b8ba3;
+        }
+
+        /* 页脚 */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 0;
+            border-top: 1px solid #eaeaf2;
+            color: #6b6b85;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #6b6b85;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #4f46e5;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 60px;
+                padding: 48px 0 64px;
+            }
+
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .visual-card {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px 0;
+            }
+
+            .nav-links {
+                gap: 24px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 48px 24px;
+            }
+
+            .cta-section h2 {
+                font-size: 28px;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .footer-links {
+                gap: 24px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn-large {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+            }
+
+            .visual-footer {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .cta-form {
+                flex-direction: column;
+            }
+
+            .cta-form input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 导航栏 -->
+        <header class="navbar">
+            <div class="logo">
+                <i class="fas fa-bolt"></i> Nova
+            </div>
+            <nav class="nav-links">
+                <a href="#">产品</a>
+                <a href="#">解决方案</a>
+                <a href="#">客户案例</a>
+                <a href="#">定价</a>
+            </nav>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-outline">登录</button>
+                <button class="btn-primary">免费试用</button>
+            </div>
+        </header>
+
+        <!-- 英雄区域 -->
+        <section class="hero">
+            <div class="hero-content">
+                <span class="hero-badge">
+                    <i class="fas fa-sparkles"></i> 全新 2.0 版本发布
+                </span>
+                <h1>
+                    让创意<span class="highlight">瞬间成真</span><br>
+                    协作从未如此简单
+                </h1>
+                <p>
+                    Nova 是为现代团队打造的智能工作空间。从想法到交付，一个平台完成设计、协作与部署。无需切换工具，专注创造价值。
+                </p>
+                <div class="hero-actions">
+                    <button class="btn-primary btn-large">立即开始 <i class="fas fa-arrow-right"
+                            style="margin-left: 8px; font-size: 14px;"></i></button>
+                    <button class="btn-secondary btn-large">观看演示</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <div class="visual-header">
+                        <div class="visual-avatars">
+                            <div class="avatar">JD</div>
+                            <div class="avatar">AL</div>
+                            <div class="avatar">MK</div>
+                            <div class="avatar avatar-more">+8</div>
+                        </div>
+                        <span class="live-indicator"><span class="dot"></span> 实时协作</span>
+                    </div>
+                    <div>
+                        <div class="visual-title">品牌重塑 · 首页设计</div>
+                        <div class="visual-text">3 个任务进行中 · 预计 2 天后完成</div>
+                    </div>
+                    <div class="progress-block">
+                        <div class="progress-item">
+                            <span style="min-width: 70px;">UI 设计</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-fill w-90"></div>
+                            </div>
+                            <span>90%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span style="min-width: 70px;">开发</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-fill w-55"></div>
+                            </div>
+                            <span>55%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span style="min-width: 70px;">测试</span>
+                            <div class="progress-bar-bg">
+                                <div class="progress-fill w-75"></div>
+                            </div>
+                            <span>75%</span>
+                        </div>
+                    </div>
+                    <div class="visual-footer">
+                        <div class="stat-item">
+                            <span class="stat-value">24</span>
+                            <span class="stat-label">活跃任务</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">团队成员</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">98%</span>
+                            <span class="stat-label">按时交付</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 特性卡片区 -->
+        <section class="features-section">
+            <div class="section-head">
+                <h2>强大功能，化繁为简</h2>
+                <p>一切你需要的工具，都整合在一个优雅的界面里，让团队专注在真正重要的事情上。</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-pen-ruler"></i></div>
+                    <h3>智能画板</h3>
+                    <p>从线框到高保真，AI 辅助生成设计稿，让创意不再受工具限制。</p>
+                    <a href="#" class="feature-link">了解详情 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-people-group"></i></div>
+                    <h3>实时协作</h3>
+                    <p>多人同时编辑、评论和决策，所有更改即时同步，告别版本混乱。</p>
+                    <a href="#" class="feature-link">了解详情 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>一键部署</h3>
+                    <p>设计稿直接发布为可交互网站，无需开发介入，即刻验证想法。</p>
+                    <a href="#" class="feature-link">了解详情 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 行动号召区域 -->
+        <section class="cta-section">
+            <h2>准备好开始创造了吗？</h2>
+            <p>加入超过 10,000 个团队，用 Nova 更快地将想法变成现实。免费开始，无需信用卡。</p>
+            <div class="cta-form">
+                <input type="email" placeholder="输入你的工作邮箱" aria-label="工作邮箱">
+                <button class="btn-primary btn-large">免费试用</button>
+            </div>
+            <div class="cta-note">14 天免费试用 · 随时取消 · 无需绑定支付方式</div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div>© 2025 Nova Inc. 保留所有权利。</div>
+            <div class="footer-links">
+                <a href="#">隐私政策</a>
+                <a href="#">服务条款</a>
+                <a href="#">帮助中心</a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

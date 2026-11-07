@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>400 · 错误请求</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f9fafc;
+            color: #1e1e2f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .error-card {
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            padding: 64px 48px;
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .code-badge {
+            display: inline-block;
+            background: #eeedff;
+            color: #4f46e5;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 8px 24px;
+            border-radius: 40px;
+            letter-spacing: 0.4px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(79, 70, 229, 0.15);
+        }
+
+        .error-card h1 {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            color: #0b0b1a;
+            margin-bottom: 20px;
+        }
+
+        .error-card p {
+            font-size: 17px;
+            color: #5b5b75;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            max-width: 380px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 34px;
+            background: #4f46e5;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 10px 20px -8px rgba(79, 70, 229, 0.35);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 14px 34px;
+            background: white;
+            color: #1e1e2f;
+            font-weight: 500;
+            font-size: 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 1.5px solid #e0e0ea;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: #4f46e5;
+            background: #f7f6ff;
+            color: #4f46e5;
+        }
+
+        .illustration {
+            font-size: 72px;
+            margin-bottom: 16px;
+            line-height: 1;
+            opacity: 0.85;
+            color: #4f46e5;
+        }
+
+        /* 细节装饰：小标记 */
+        .hint {
+            margin-top: 36px;
+            font-size: 14px;
+            color: #8b8ba3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .hint i {
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .error-card {
+                padding: 48px 24px;
+            }
+
+            .error-card h1 {
+                font-size: 30px;
+            }
+
+            .error-card p {
+                font-size: 16px;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                text-align: center;
+                padding: 14px 20px;
+            }
+
+            .illustration {
+                font-size: 56px;
+            }
+        }
+    </style>
+    <!-- 使用简单图标库 (Font Awesome) 仅用于点缀 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="error-card">
+        <div class="illustration">
+            <i class="fas fa-circle-exclamation"></i>
+        </div>
+        <span class="code-badge">错误 400</span>
+        <h1>请求无法识别</h1>
+        <p>服务器无法理解这个请求。可能是链接错误或输入有误，请检查后重试。</p>
+        <div class="actions">
+            <a href="/" class="btn-primary">返回首页</a>
+            <a href="#" class="btn-secondary">联系我们</a>
+        </div>
+        <div class="hint">
+            <i class="fas fa-arrow-left"></i> 或者按浏览器返回键
+        </div>
+    </div>
+</body>
+
+</html>
